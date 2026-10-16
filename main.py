@@ -51,18 +51,46 @@ def prepare_student_dict_for_db(student_model: StudentCreate) -> dict:
     return data
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    """Returns empty 204 response so browser favicon requests don't show 404."""
+    from fastapi.responses import Response
+    return Response(status_code=204)
+
+
 @app.get("/", tags=["General"])
 def root():
     """
-    Welcome endpoint providing project details and links to documentation.
+    Root endpoint: Automatically redirects browser to interactive Swagger UI (/docs)
+    while returning 200 OK.
     """
-    return {
-        "project": "Student Database CRUD Application",
-        "internship": "EWB Edu Tech Pvt. Ltd.",
-        "status": "Online",
-        "documentation_url": "/docs",
-        "alternative_docs_url": "/redoc"
-    }
+    from fastapi.responses import HTMLResponse
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Student Database CRUD Application</title>
+        <meta http-equiv="refresh" content="0; url=/docs" />
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f6f8; margin: 0; }
+            .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; max-width: 480px; }
+            h2 { color: #1a202c; margin-bottom: 8px; }
+            p { color: #4a5568; margin-bottom: 24px; font-size: 15px; }
+            .btn { display: inline-block; padding: 12px 28px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: background 0.2s; }
+            .btn:hover { background: #1d4ed8; }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h2>🎓 Student Database CRUD Application</h2>
+            <p>EWB Edu Tech Pvt. Ltd. Internship Assignment</p>
+            <p>Opening Swagger Interactive API Documentation...</p>
+            <a class="btn" href="/docs">Click here if not redirected to /docs</a>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content, status_code=200)
 
 
 # ---------------------------------------------------------------------------
